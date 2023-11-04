@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+  app:
+    container_name: app
+    build: ./node
+    volumes:
+      - ./node:/usr/src/app
+    depends_on:
+      - db
+    networks:
+      - fullcycle-node
+
+  db:
+    container_name: db
+    build: ./mysql
+    volumes:
+      - ./dbdata:/var/lib/mysql
+      - ./mysql:/docker-entrypoint-initdb.d
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    networks:
+      - fullcycle-node
+
+  nginx:
+    container_name: nginx
+    build: ./nginx
+    ports:
+      - 8080:80
+    depends_on:
+      - app
+    networks:
+      - fullcycle-node
+
+networks:
+  fullcycle-node:
+    driver: bridge
