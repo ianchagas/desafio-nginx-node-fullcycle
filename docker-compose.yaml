@@ -6,8 +6,10 @@ services:
     build: ./node
     volumes:
       - ./node:/usr/src/app
+      - /usr/src/app/node_modules
     depends_on:
       - db
+    restart: always
     networks:
       - fullcycle-node
 
