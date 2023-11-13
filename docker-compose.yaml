@@ -3,7 +3,9 @@ version: "3"
 services:
   app:
     container_name: app
-    build: ./node
+    build:
+      context: node
+    entrypoint: dockerize -wait tcp://db:3306 -timeout 20s ./run.sh
     volumes:
       - ./node:/usr/src/app
       - /usr/src/app/node_modules
@@ -15,7 +17,9 @@ services:
 
   db:
     container_name: db
-    build: ./mysql
+    build:
+      context: mysql
+    restart: always
     volumes:
       - ./dbdata:/var/lib/mysql
       - ./mysql:/docker-entrypoint-initdb.d
@@ -26,11 +30,13 @@ services:
 
   nginx:
     container_name: nginx
-    build: ./nginx
+    build:
+      context: nginx
     ports:
       - 8080:80
     depends_on:
       - app
+    restart: always
     networks:
       - fullcycle-node
 
